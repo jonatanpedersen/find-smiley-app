@@ -4,89 +4,83 @@ import cnf from 'cnf';
 import express from 'express';
 import http from 'http';
 import https from 'https';
-import mongodb from 'mongodb';
-import path  from 'path';
+import {MongoClient} from 'mongodb';
+import path	from 'path';
 import url from 'url';
 import nodeSchedule from 'node-schedule';
 import nodeFetch from 'node-fetch';
 import { parseString } from 'xml2js';
 import fs from 'fs';
+import moment from 'moment';
+import compression from 'compression';
+import { stringify } from 'csv';
 
 const feedUrl = 'https://www.foedevarestyrelsen.dk/_layouts/15/sdata/smiley_xml.xml';
 
 function noop () {}
 
-function job (callback) {
-  callback = callback || noop;
-  console.log('job()');
+function createJob (db) {
+	return function job (callback) {
+		let xml = fs.readFileSync('./data/smiley_xml.xml', 'utf8');
 
-  return downloadFeed(feedUrl, (err, feed) => {
-    if (err) {
-      return callback(err);
-    }
+		parseString(xml, {explicitArray: false, trim: true}, (err, result)	=> {
+			if (err) {
+				return callback(err);
+			}
 
-    return parseFeed(feed, (err, parsedFeed) => {
-      if (err) {
-        return callback(err);
-      }
+			function parseDate (date) {
+				return date ? moment(date, 'DD-MM-YYYY').toDate() : undefined;
+			}
 
-      return processFeed(parsedFeed, (err) => {
-        if (err) {
-          return callback(err);
-        }
+			function parseNumber (number) {
+				return number ? parseInt(number) : undefined;
+			}
 
-        return callback(null);
-      });
-    });
-  });
+			let ops = result.document.row
+				.map(row => {
+					return {
+						_id: parseNumber(row.navnelbnr),
+						name: row.navn1,
+						streetAddress: row.adresse1,
+						postalCode: row.postnr,
+						city: row.By,
+						latitude: row.Geo_Lat,
+						longitude: row.Geo_Lng,
+						elite: parseNumber(row.Elite_Smiley),
+						lastResult: parseNumber(row.seneste_kontrol),
+						lastDate: parseDate(row.seneste_kontrol_dato),
+						secondLastResult: parseNumber(row.naestseneste_kontrol),
+						secondLastDate: parseDate(row.naestseneste_kontrol_dato),
+						thirdLastResult: parseNumber(row.tredjeseneste_kontrol),
+						thirdLastDate: parseDate(row.tredjeseneste_kontrol_dato),
+						forthLastResult: parseNumber(row.fjerdeseneste_kontrol),
+						forthLastDate: parseDate(row.fjerdeseneste_kontrol_dato)
+					};
+				})
+				.map(organization => {
+					return {
+						replaceOne: {
+							filter: {_id: organization._id},
+							replacement: organization,
+							upsert: true
+						}
+					};
+				});
+
+				return db.collection('organizations').bulkWrite(ops)
+					.then(() => {
+						console.log('done');
+						callback(null);
+					})
+					.catch(err => callback(err));
+		});
+	}
 }
 
-function downloadFeed (url, callback) {
-  console.log('downloadFeed()');
-
-	return fs.readFile('./data/smiley_xml.xml', 'utf8', callback);
-  // return nodeFetch(url)
-	// 	.then(response => response.text())
-	// 	.then(body => callback(null, body))
-	// 	.catch(callback);
-};
-
-function parseFeed (feed, callback) {
-  console.log('parseFeed()');
-
-  parseString(feed, {explicitArray: false, trim: true}, (err, result)  => {
-    if (err) {
-      return callback(err);
-    }
-
-    return callback(null, result);
-  });
-}
-
-function processFeed (parsedFeed, callback) {
-  console.log('processFeed()');
-
-	let rows = parsedFeed.document.row;
-
-	let memo = rows.reduce((memo, next) => {
-		let id = next.navnelbnr;
-		memo[id] = memo[id] || { reports: []};
-		let entry = memo[id];
-		entry.name = next.navn1;
-		entry.streetAddress = next.adresse1;
-		entry.postalCode = next.postnr;
-		entry.city = next.By;
-		entry.latitude = next.Geo_Lat;
-		entry.longitude = next.Geo_Lng;
-		entry.reports.push({result: next.seneste_kontrol, date: next.seneste_kontrol_dato})
-
-		return memo;
-	})
-
-  console.log(JSON.stringify(memo, null, 4));
-
-  return callback(null);
-}
+// return nodeFetch(url)
+// 	.then(response => response.text())
+// 	.then(body => callback(null, body))
+// 	.catch(callback);
 
 function getScedulingRule () {
 	console.log('getScedulingRule()');
@@ -97,22 +91,49 @@ function getScedulingRule () {
 	return rule;
 }
 
-export function main () {
-  let scheduledJobs = [];
-  let app = express();
+export async function main () {
+	try {
+		let connectionString = cnf.mongodb.connectionString;
+		let db = await MongoClient.connect(connectionString);
 
-  app.use(bodyParser.json());
+		let scheduledJobs = [];
+		let app = express();
 
-  app.use('/', express.static('./public'));
-  app.use('/*', express.static('./public/index.html'));
+		app.use(bodyParser.json());
+		app.use(compression());
 
-  let httpServer = http.createServer(app);
-  let port = process.env.PORT || 8080;
+		app.get('/api/organizations', (req, res) => {
+			db.collection('organizations').find().toArray().then(organizations => res.json(organizations));
+		});
 
-  httpServer.listen(port, () => {
-    console.log(`listening on ${port}`);
+		app.get('/api/organizations/csv', (req, res) => {
+			res.setHeader('Content-Type', 'text/html');
 
-    scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
-    scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
-  });
+			let stream = db.collection('organizations')
+				.find()
+				.stream()
+				.pipe(stringify())
+				.pipe(res);
+		});
+
+		app.get('/api/organizations/:id', (req, res) => {
+			db.collection('organizations').findOne({_id: parseInt(req.params.id)}).then(organization => res.json(organization));
+		});
+
+		app.use('/', express.static('./public'));
+		app.use('/*', express.static('./public/index.html'));
+
+		let httpServer = http.createServer(app);
+		let port = cnf.port;
+
+		httpServer.listen(port, () => {
+			console.log(`listening on ${port}`);
+			let job = createJob(db);
+
+			scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
+			//scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
+		});
+	} catch (err) {
+		console.error(err);
+	}
 }
