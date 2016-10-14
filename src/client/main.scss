@@ -1,0 +1,156 @@
+@import 'variables';
+
+html {
+  font-family: sans-serif;
+  font-size: 20px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+main {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+textarea, input { outline: none; }
+
+.header {
+  background-color: $primary-color;
+  color: #fff;
+}
+
+.footer {
+  background-color: #eee;
+  color: #333;
+}
+
+.header,
+.footer {
+    text-align: center;
+    line-height: 2rem;
+    flex: 0 0 2rem;
+}
+
+.index {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-query {
+  display: flex;
+  flex-direction: row;
+  background: #eee;
+  flex: 0 0 3rem;
+  input {
+    flex: 1;
+    padding: 0.5rem;
+    height: 3rem;
+    font-size: 1rem;
+  }
+  button {
+    flex: 0 0 2rem;
+    padding: 0.5rem;
+    height: 2rem;
+  }
+}
+
+.search-result {
+  flex: 1;
+  overflow: scroll;
+}
+
+.sm {
+  width: 2rem;
+  height: 2rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+
+  &.sm1 {
+    background-image: url($sm1);
+  }
+
+  &.sm2 {
+    background-image: url($sm2);
+  }
+
+  &.sm3 {
+    background-image: url($sm3);
+  }
+
+  &.sm4 {
+    background-image: url($sm4);
+  }
+
+  &.sme {
+    background-image: url($sme);
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+.search-result-list {
+  &__item {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    border-bottom: 1px solid $secondary-color;
+    flex-wrap: wrap;
+
+    .col1 {
+      padding: 1rem;
+      flex-basis: 4rem;
+      flex-grow: 1;
+    }
+
+    .col2 {
+      padding: 1rem;
+      flex-basis: 4rem;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+
+    .col3 {
+      background-color: $secondary-color;
+      margin: 1rem;
+      padding: 1rem;
+      flex-basis: 12rem;
+      flex-grow: 1;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: row;
+      > * {
+        flex-basis: 3rem;
+        flex-grow: 1;
+        flex-shrink: 0;
+        text-align: center;
+      }
+    }
+
+    .name {
+      margin: 0 0 0.5rem 0;
+    }
+    .distance {
+      color: 444;
+      font-size: 0.75rem;
+      margin: 0 0 0.5rem 0;
+    }
+    .address {
+      margin: 0;
+    }
+  }
+}
+
+.date {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.50rem;
+}

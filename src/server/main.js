@@ -21,58 +21,59 @@ function noop () {}
 
 function createJob (db) {
 	return function job (callback) {
-		let xml = fs.readFileSync('./data/smiley_xml.xml', 'utf8');
+		nodeFetch(feedUrl)
+			.then(response => response.text())
+			.then(text => {
+				parseString(text, {explicitArray: false, trim: true}, (err, result)	=> {
+					if (err) {
+						return callback(err);
+					}
 
-		parseString(xml, {explicitArray: false, trim: true}, (err, result)	=> {
-			if (err) {
-				return callback(err);
-			}
+					function parseDate (date) {
+						return date ? moment(date, 'DD-MM-YYYY').toDate() : undefined;
+					}
 
-			function parseDate (date) {
-				return date ? moment(date, 'DD-MM-YYYY').toDate() : undefined;
-			}
+					function parseNumber (number) {
+						return number ? parseInt(number) : undefined;
+					}
 
-			function parseNumber (number) {
-				return number ? parseInt(number) : undefined;
-			}
+					let ops = result.document.row
+						.map(row => {
+							return {
+								_id: parseNumber(row.navnelbnr),
+								name: row.navn1,
+								streetAddress: row.adresse1,
+								postalCode: row.postnr,
+								city: row.By,
+								latitude: row.Geo_Lat,
+								longitude: row.Geo_Lng,
+								elite: parseNumber(row.Elite_Smiley) === 1,
+								lastResult: parseNumber(row.seneste_kontrol),
+								lastDate: parseDate(row.seneste_kontrol_dato),
+								secondLastResult: parseNumber(row.naestseneste_kontrol),
+								secondLastDate: parseDate(row.naestseneste_kontrol_dato),
+								thirdLastResult: parseNumber(row.tredjeseneste_kontrol),
+								thirdLastDate: parseDate(row.tredjeseneste_kontrol_dato),
+								fourthLastResult: parseNumber(row.fjerdeseneste_kontrol),
+								fourthLastDate: parseDate(row.fjerdeseneste_kontrol_dato)
+							};
+						})
+						.map(document => {
+							return {
+								replaceOne: {
+									filter: {_id: document._id},
+									replacement: document,
+									upsert: true
+								}
+							};
+						});
 
-			let ops = result.document.row
-				.map(row => {
-					return {
-						_id: parseNumber(row.navnelbnr),
-						name: row.navn1,
-						streetAddress: row.adresse1,
-						postalCode: row.postnr,
-						city: row.By,
-						latitude: row.Geo_Lat,
-						longitude: row.Geo_Lng,
-						elite: parseNumber(row.Elite_Smiley),
-						lastResult: parseNumber(row.seneste_kontrol),
-						lastDate: parseDate(row.seneste_kontrol_dato),
-						secondLastResult: parseNumber(row.naestseneste_kontrol),
-						secondLastDate: parseDate(row.naestseneste_kontrol_dato),
-						thirdLastResult: parseNumber(row.tredjeseneste_kontrol),
-						thirdLastDate: parseDate(row.tredjeseneste_kontrol_dato),
-						forthLastResult: parseNumber(row.fjerdeseneste_kontrol),
-						forthLastDate: parseDate(row.fjerdeseneste_kontrol_dato)
-					};
-				})
-				.map(organization => {
-					return {
-						replaceOne: {
-							filter: {_id: organization._id},
-							replacement: organization,
-							upsert: true
-						}
-					};
+						return db.collection('documents').bulkWrite(ops)
+							.then(() => {
+								callback(null);
+							})
+							.catch(err => callback(err));
 				});
-
-				return db.collection('organizations').bulkWrite(ops)
-					.then(() => {
-						console.log('done');
-						callback(null);
-					})
-					.catch(err => callback(err));
 		});
 	}
 }
@@ -102,22 +103,24 @@ export async function main () {
 		app.use(bodyParser.json());
 		app.use(compression());
 
-		app.get('/api/organizations', (req, res) => {
-			db.collection('organizations').find().toArray().then(organizations => res.json(organizations));
+		app.get('/api/documents', (req, res) => {
+			db.collection('documents').find().toArray().then(documents => res.json(documents));
 		});
 
-		app.get('/api/organizations/csv', (req, res) => {
+		app.get('/api/documents/csv', (req, res) => {
 			res.setHeader('Content-Type', 'text/html');
 
-			let stream = db.collection('organizations')
+			let stream = db.collection('documents')
 				.find()
 				.stream()
 				.pipe(stringify())
 				.pipe(res);
 		});
 
-		app.get('/api/organizations/:id', (req, res) => {
-			db.collection('organizations').findOne({_id: parseInt(req.params.id)}).then(organization => res.json(organization));
+		app.get('/api/documents/:id', (req, res) => {
+			db.collection('documents')
+				.findOne({_id: parseInt(req.params.id)})
+				.then(document => res.json(document));
 		});
 
 		app.use('/', express.static('./public'));
@@ -130,10 +133,10 @@ export async function main () {
 			console.log(`listening on ${port}`);
 			let job = createJob(db);
 
-			scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
-			//scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
+			//scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
+			scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
 		});
 	} catch (err) {
-		console.error(err);
+		console.error(err, err.stack);
 	}
 }

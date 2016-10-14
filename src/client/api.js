@@ -6,7 +6,6 @@ export function del (url) {
 	    'Accept': 'application/json'
 	  }
 	})
-	.then(handleUnauthorized)
 	.then(checkStatus)
   .then(parseJSON);
 }
@@ -19,7 +18,6 @@ export function get (url) {
 	  },
 		method: 'GET'
 	})
-	.then(handleUnauthorized)
 	.then(checkStatus)
   .then(parseJSON);
 }
@@ -34,7 +32,6 @@ export function patch (url, data) {
 	    'Content-Type': 'application/json'
 	  }
 	})
-	.then(handleUnauthorized)
 	.then(checkStatus)
   .then(parseJSON);
 }
@@ -49,7 +46,6 @@ export function post (url, data) {
 	    'Content-Type': 'application/json'
 	  }
 	})
-	.then(handleUnauthorized)
 	.then(checkStatus)
   .then(parseJSON);
 }
@@ -64,17 +60,8 @@ export function put (url, data) {
 	    'Content-Type': 'application/json'
 	  }
 	})
-	.then(handleUnauthorized)
 	.then(checkStatus)
   .then(parseJSON);
-}
-
-function handleUnauthorized(response) {
-	if (response.status === 401) {
-		document.location.href = `/login?redirectUrl=${document.location.href}`;
-	}
-
-	return response;
 }
 
 function checkStatus(response) {
