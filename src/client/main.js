@@ -74,7 +74,7 @@ class Header extends React.Component {
 class Footer extends React.Component {
 	render () {
 		return (<div className="footer">
-		&copy; 2016
+		&copy; 2016 <a href="https://www.jonatanpedersen.com/">Jonatan Pedersen/</a>
 		</div>);
 	}
 }
