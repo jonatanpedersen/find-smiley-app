@@ -1,5 +1,5 @@
 export default {
-  host: process.env.HOST,
+  port: process.env.port,
   mongodb: {
     connectionString: process.env.MONGODB_URI
   }
