@@ -6,12 +6,42 @@ import {createSearchIndex, createSearch} from './search';
 import mainStyles from './main.scss';
 import classnames from 'classnames';
 import moment from 'moment';
+import localforage from 'localforage';
+
+function createDocumentsMap (documents) {
+	return documents.reduce((documentsMap, nextDocument) => {
+		documentsMap[nextDocument._id] = nextDocument;
+		return documentsMap;
+	}, {});
+}
+
+function createDocumentsArray (documentsMap) {
+	return ;
+}
 
 export async function main () {
 	try {
+		localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
 		let mainElement = document.getElementById('main');
+
+		let documents = await localforage.getItem('documents') || [];
+
+		let after = documents
+			.map(document => moment(document.date))
+			.reduce((after, date) => {
+				return date.isAfter(after) ? date : after;
+			}, moment('1970-01-01'))
+			.toDate()
+			.toISOString();
+
+		console.log(after);
+
 		console.log('fetching documents');
-		let documents = await get('/api/documents');
+		let newDocuments = await get(`/api/documents?after=${after}`);
+
+		documents = Object.values({...createDocumentsMap(documents),...createDocumentsMap(newDocuments)});
+
+		localforage.setItem('documents', documents);
 
 		console.log('getting position');
 		let position = await getCurrentPosition();
@@ -65,17 +95,24 @@ class Index extends React.Component {
 
 class Header extends React.Component {
 	render () {
-		return (<div className="header">
+		return (<header className="header">
 		Find Smiley
-		</div>);
+		</header>);
 	}
 }
 
 class Footer extends React.Component {
 	render () {
-		return (<div className="footer">
-		&copy; 2016 <a href="https://www.jonatanpedersen.com/">Jonatan Pedersen/</a>
-		</div>);
+		return (<footer className="footer">
+			<dl>
+				<dt>&copy; 2016</dt>
+				<dd><a href="https://www.jonatanpedersen.com/">Jonatan Pedersen</a></dd>
+				<dt>Datakilde:</dt>
+				<dd><a href="https://www.foedevarestyrelsen.dk/">Fødevarestyrelsen</a></dd>
+				<dt>Sidst opdateret:</dt>
+				<dd>I dag</dd>
+			</dl>
+		</footer>);
 	}
 }
 
@@ -176,9 +213,9 @@ class Distance extends React.Component {
 		let text;
 
 		if (distance >= 1) {
-			text = `${Math.round(distance * 100) / 100}km`;
+			text = `${Math.round(distance * 100) / 100}km væk`;
 		} else {
-			text = `${Math.round(distance * 1000)}m`;
+			text = `${Math.round(distance * 1000)}m væk`;
 		}
 
 		return (
