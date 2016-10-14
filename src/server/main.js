@@ -87,7 +87,7 @@ function getScedulingRule () {
 	console.log('getScedulingRule()');
 	var rule = new nodeSchedule.RecurrenceRule();
 	rule.dayOfWeek = [new nodeSchedule.Range(1, 7)];
-	rule.hour = 0;
+	rule.hour = 9;
 	rule.minute = 0;
 	return rule;
 }
@@ -133,7 +133,7 @@ export async function main () {
 			console.log(`listening on ${port}`);
 			let job = createJob(db);
 
-			//scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
+			scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
 			//scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
 		});
 	} catch (err) {
