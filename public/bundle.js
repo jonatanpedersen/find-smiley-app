@@ -61,10 +61,6 @@
 	});
 	exports.main = undefined;
 
-	var _promise = __webpack_require__(2);
-
-	var _promise2 = _interopRequireDefault(_promise);
-
 	var _keys = __webpack_require__(67);
 
 	var _keys2 = _interopRequireDefault(_keys);
@@ -89,10 +85,6 @@
 
 	var _inherits3 = _interopRequireDefault(_inherits2);
 
-	var _regenerator = __webpack_require__(107);
-
-	var _regenerator2 = _interopRequireDefault(_regenerator);
-
 	var _extends2 = __webpack_require__(113);
 
 	var _extends3 = _interopRequireDefault(_extends2);
@@ -101,147 +93,165 @@
 
 	var _values2 = _interopRequireDefault(_values);
 
+	var _regenerator = __webpack_require__(107);
+
+	var _regenerator2 = _interopRequireDefault(_regenerator);
+
 	var _asyncToGenerator2 = __webpack_require__(122);
 
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-	var main = exports.main = function () {
-		var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-			var _this = this;
-
-			return _regenerator2.default.wrap(function _callee2$(_context2) {
+	var getDocuments = function () {
+		var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+			return _regenerator2.default.wrap(function _callee$(_context) {
 				while (1) {
-					switch (_context2.prev = _context2.next) {
+					switch (_context.prev = _context.next) {
 						case 0:
-							_context2.prev = 0;
-							return _context2.delegateYield(_regenerator2.default.mark(function _callee() {
-								var mainElement, documents, after, newDocuments, position, searchIndex, search;
-								return _regenerator2.default.wrap(function _callee$(_context) {
-									while (1) {
-										switch (_context.prev = _context.next) {
-											case 0:
-												_localforage2.default.setDriver([_localforage2.default.WEBSQL, _localforage2.default.INDEXEDDB]);
-												mainElement = document.getElementById('main');
-												_context.next = 4;
-												return _localforage2.default.getItem('documents');
+							_context.prev = 0;
+							_context.next = 3;
+							return _localforage2.default.getItem('documents');
 
-											case 4:
-												_context.t0 = _context.sent;
+						case 3:
+							_context.t0 = _context.sent;
 
-												if (_context.t0) {
-													_context.next = 7;
-													break;
-												}
+							if (_context.t0) {
+								_context.next = 6;
+								break;
+							}
 
-												_context.t0 = [];
+							_context.t0 = [];
 
-											case 7:
-												documents = _context.t0;
-												after = documents.map(function (document) {
-													return (0, _moment2.default)(document.date);
-												}).reduce(function (after, date) {
-													return date.isAfter(after) ? date : after;
-												}, (0, _moment2.default)('1970-01-01')).toDate().toISOString();
+						case 6:
+							return _context.abrupt('return', _context.t0);
 
+						case 9:
+							_context.prev = 9;
+							_context.t1 = _context['catch'](0);
+							throw _context.t1;
 
-												console.log(after);
-
-												console.log('fetching documents');
-												_context.next = 13;
-												return (0, _api.get)('/api/documents?after=' + after);
-
-											case 13:
-												newDocuments = _context.sent;
-
-
-												documents = (0, _values2.default)((0, _extends3.default)({}, createDocumentsMap(documents), createDocumentsMap(newDocuments)));
-
-												_localforage2.default.setItem('documents', documents);
-
-												console.log('getting position');
-												_context.next = 19;
-												return getCurrentPosition();
-
-											case 19:
-												position = _context.sent;
-
-
-												console.log('calculating distances');
-												documents.forEach(function (document) {
-													document.distance = getDistanceFromLatLonInKm(position.coords.latitude, position.coords.longitude, document.latitude, document.longitude);
-												});
-
-												console.log('sorting documents');
-												documents.sort(function (a, b) {
-													return a.distance - b.distance;
-												});
-
-												console.log('creating search index');
-												searchIndex = (0, _search.createSearchIndex)(documents);
-												search = (0, _search.createSearch)(searchIndex, documents);
-
-
-												(0, _reactDom.render)(_react2.default.createElement(
-													_reactRouter.Router,
-													{ history: _reactRouter.browserHistory },
-													_react2.default.createElement(
-														_reactRouter.Route,
-														{ path: '/' },
-														_react2.default.createElement(_reactRouter.IndexRoute, { component: withProps(Index, { search: search }) })
-													)
-												), mainElement);
-
-											case 28:
-											case 'end':
-												return _context.stop();
-										}
-									}
-								}, _callee, _this);
-							})(), 't0', 2);
-
-						case 2:
-							_context2.next = 7;
-							break;
-
-						case 4:
-							_context2.prev = 4;
-							_context2.t1 = _context2['catch'](0);
-
-							console.error(_context2.t1);
-
-						case 7:
+						case 12:
 						case 'end':
-							return _context2.stop();
+							return _context.stop();
 					}
 				}
-			}, _callee2, this, [[0, 4]]);
+			}, _callee, this, [[0, 9]]);
 		}));
 
-		return function main() {
+		return function getDocuments() {
 			return _ref.apply(this, arguments);
 		};
 	}();
 
-	var getCurrentPosition = function () {
-		var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
+	var setDocuments = function () {
+		var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(documents) {
+			return _regenerator2.default.wrap(function _callee2$(_context2) {
+				while (1) {
+					switch (_context2.prev = _context2.next) {
+						case 0:
+							return _context2.abrupt('return', _localforage2.default.setItem('documents', documents));
+
+						case 1:
+						case 'end':
+							return _context2.stop();
+					}
+				}
+			}, _callee2, this);
+		}));
+
+		return function setDocuments(_x) {
+			return _ref2.apply(this, arguments);
+		};
+	}();
+
+	var updateDocuments = function () {
+		var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(documents) {
+			var _documents, after, newDocuments;
+
 			return _regenerator2.default.wrap(function _callee3$(_context3) {
 				while (1) {
 					switch (_context3.prev = _context3.next) {
 						case 0:
-							return _context3.abrupt('return', new _promise2.default(function (resolve, reject) {
-								navigator.geolocation.getCurrentPosition(resolve, reject);
-							}));
+							_context3.prev = 0;
+							_context3.next = 3;
+							return getDocuments();
 
-						case 1:
+						case 3:
+							_documents = _context3.sent;
+							after = _documents.map(function (document) {
+								return (0, _moment2.default)(document.date);
+							}).reduce(function (after, date) {
+								return date.isAfter(after) ? date : after;
+							}, (0, _moment2.default)('1970-01-01')).toDate().toISOString();
+							_context3.next = 7;
+							return (0, _api.get)('/api/documents?after=' + after);
+
+						case 7:
+							newDocuments = _context3.sent;
+
+
+							_documents = (0, _values2.default)((0, _extends3.default)({}, createDocumentsMap(_documents), createDocumentsMap(newDocuments)));
+
+							_context3.next = 11;
+							return setDocuments(_documents);
+
+						case 11:
+							_context3.next = 16;
+							break;
+
+						case 13:
+							_context3.prev = 13;
+							_context3.t0 = _context3['catch'](0);
+							throw _context3.t0;
+
+						case 16:
 						case 'end':
 							return _context3.stop();
 					}
 				}
-			}, _callee3, this);
+			}, _callee3, this, [[0, 13]]);
 		}));
 
-		return function getCurrentPosition() {
-			return _ref2.apply(this, arguments);
+		return function updateDocuments(_x2) {
+			return _ref3.apply(this, arguments);
+		};
+	}();
+
+	var main = exports.main = function () {
+		var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
+			var mainElement;
+			return _regenerator2.default.wrap(function _callee4$(_context4) {
+				while (1) {
+					switch (_context4.prev = _context4.next) {
+						case 0:
+							try {
+								_localforage2.default.setDriver([_localforage2.default.WEBSQL, _localforage2.default.INDEXEDDB]);
+
+								mainElement = document.getElementById('main');
+
+
+								(0, _reactDom.render)(_react2.default.createElement(
+									_reactRouter.Router,
+									{ history: _reactRouter.browserHistory },
+									_react2.default.createElement(
+										_reactRouter.Route,
+										{ path: '/', component: Main },
+										_react2.default.createElement(_reactRouter.IndexRoute, { component: Home })
+									)
+								), mainElement);
+							} catch (err) {
+								console.error(err);
+							}
+
+						case 1:
+						case 'end':
+							return _context4.stop();
+					}
+				}
+			}, _callee4, this);
+		}));
+
+		return function main() {
+			return _ref4.apply(this, arguments);
 		};
 	}();
 
@@ -286,20 +296,90 @@
 		return;
 	}
 
-	var Index = function (_React$Component) {
-		(0, _inherits3.default)(Index, _React$Component);
+	var Main = function (_React$Component) {
+		(0, _inherits3.default)(Main, _React$Component);
 
-		function Index(props) {
-			(0, _classCallCheck3.default)(this, Index);
+		function Main(props) {
+			(0, _classCallCheck3.default)(this, Main);
 
-			var _this2 = (0, _possibleConstructorReturn3.default)(this, (Index.__proto__ || (0, _getPrototypeOf2.default)(Index)).call(this, props));
+			var _this = (0, _possibleConstructorReturn3.default)(this, (Main.__proto__ || (0, _getPrototypeOf2.default)(Main)).call(this, props));
 
-			_this2.handleSearchQueryChange = _this2.handleSearchQueryChange.bind(_this2);
-			_this2.state = {};
-			return _this2;
+			_this.state = { documents: [] };
+			return _this;
 		}
 
-		(0, _createClass3.default)(Index, [{
+		(0, _createClass3.default)(Main, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var _this2 = this;
+
+				getDocuments().then(function (documents) {
+					_this2.setState({ documents: documents });
+				});
+
+				updateDocuments().then(getDocuments).then(function (documents) {
+					_this2.setState({ documents: documents });
+				});
+
+				var watchId = navigator.geolocation.watchPosition(function (currentPosition) {
+					_this2.setState({ currentPosition: currentPosition });
+				}, function (err) {
+					_this2.setState({ currentPosition: undefined });
+				});
+
+				this.setState({ watchId: watchId });
+			}
+		}, {
+			key: 'componentWillUnmount',
+			value: function componentWillUnmount() {
+				var watchId = this.state.watchId;
+
+
+				if (watchId) {
+					navigator.geolocation.clearWatch(watchId);
+				}
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var _state = this.state;
+				var documents = _state.documents;
+				var currentPosition = _state.currentPosition;
+
+
+				if (currentPosition) {
+					documents.forEach(function (document) {
+						document.distance = getDistanceFromLatLonInKm(currentPosition.coords.latitude, currentPosition.coords.longitude, document.latitude, document.longitude);
+					});
+
+					documents.sort(function (a, b) {
+						return a.distance - b.distance;
+					});
+				}
+
+				var searchIndex = (0, _search.createSearchIndex)(documents);
+				var search = (0, _search.createSearch)(searchIndex, documents);
+
+				return _react2.default.cloneElement(this.props.children, { search: search });
+			}
+		}]);
+		return Main;
+	}(_react2.default.Component);
+
+	var Home = function (_React$Component2) {
+		(0, _inherits3.default)(Home, _React$Component2);
+
+		function Home(props) {
+			(0, _classCallCheck3.default)(this, Home);
+
+			var _this3 = (0, _possibleConstructorReturn3.default)(this, (Home.__proto__ || (0, _getPrototypeOf2.default)(Home)).call(this, props));
+
+			_this3.handleSearchQueryChange = _this3.handleSearchQueryChange.bind(_this3);
+			_this3.state = {};
+			return _this3;
+		}
+
+		(0, _createClass3.default)(Home, [{
 			key: 'handleSearchQueryChange',
 			value: function handleSearchQueryChange(newSearchQuery) {
 				this.setState({ searchQuery: newSearchQuery });
@@ -314,16 +394,15 @@
 					{ className: 'index' },
 					_react2.default.createElement(Header, null),
 					_react2.default.createElement(SearchQuery, { onChange: this.handleSearchQueryChange }),
-					_react2.default.createElement(SearchResult, { searchResult: searchResult }),
-					_react2.default.createElement(Footer, null)
+					_react2.default.createElement(SearchResult, { searchResult: searchResult })
 				);
 			}
 		}]);
-		return Index;
+		return Home;
 	}(_react2.default.Component);
 
-	var Header = function (_React$Component2) {
-		(0, _inherits3.default)(Header, _React$Component2);
+	var Header = function (_React$Component3) {
+		(0, _inherits3.default)(Header, _React$Component3);
 
 		function Header() {
 			(0, _classCallCheck3.default)(this, Header);
@@ -343,8 +422,8 @@
 		return Header;
 	}(_react2.default.Component);
 
-	var Footer = function (_React$Component3) {
-		(0, _inherits3.default)(Footer, _React$Component3);
+	var Footer = function (_React$Component4) {
+		(0, _inherits3.default)(Footer, _React$Component4);
 
 		function Footer() {
 			(0, _classCallCheck3.default)(this, Footer);
@@ -405,8 +484,8 @@
 		return Footer;
 	}(_react2.default.Component);
 
-	var Smiley = function (_React$Component4) {
-		(0, _inherits3.default)(Smiley, _React$Component4);
+	var Smiley = function (_React$Component5) {
+		(0, _inherits3.default)(Smiley, _React$Component5);
 
 		function Smiley() {
 			(0, _classCallCheck3.default)(this, Smiley);
@@ -424,8 +503,8 @@
 		return Smiley;
 	}(_react2.default.Component);
 
-	var SearchQuery = function (_React$Component5) {
-		(0, _inherits3.default)(SearchQuery, _React$Component5);
+	var SearchQuery = function (_React$Component6) {
+		(0, _inherits3.default)(SearchQuery, _React$Component6);
 
 		function SearchQuery() {
 			(0, _classCallCheck3.default)(this, SearchQuery);
@@ -435,13 +514,13 @@
 		(0, _createClass3.default)(SearchQuery, [{
 			key: 'render',
 			value: function render() {
-				var _this7 = this;
+				var _this8 = this;
 
 				return _react2.default.createElement(
 					'div',
 					{ className: 'search-query' },
 					_react2.default.createElement('input', { type: 'search', id: 'searchQuery', placeholder: 'S\xF8g p\xE5 adresse, postnummer, by, firmanavn', name: 'searchQuery', onChange: function onChange(event) {
-							return _this7.props.onChange && _this7.props.onChange(event.target.value);
+							return _this8.props.onChange && _this8.props.onChange(event.target.value);
 						} })
 				);
 			}
@@ -449,8 +528,8 @@
 		return SearchQuery;
 	}(_react2.default.Component);
 
-	var SearchResult = function (_React$Component6) {
-		(0, _inherits3.default)(SearchResult, _React$Component6);
+	var SearchResult = function (_React$Component7) {
+		(0, _inherits3.default)(SearchResult, _React$Component7);
 
 		function SearchResult() {
 			(0, _classCallCheck3.default)(this, SearchResult);
@@ -474,8 +553,8 @@
 		return SearchResult;
 	}(_react2.default.Component);
 
-	var SearchResultList = function (_React$Component7) {
-		(0, _inherits3.default)(SearchResultList, _React$Component7);
+	var SearchResultList = function (_React$Component8) {
+		(0, _inherits3.default)(SearchResultList, _React$Component8);
 
 		function SearchResultList() {
 			(0, _classCallCheck3.default)(this, SearchResultList);
@@ -504,8 +583,8 @@
 		return SearchResultList;
 	}(_react2.default.Component);
 
-	var SearchResultListItem = function (_React$Component8) {
-		(0, _inherits3.default)(SearchResultListItem, _React$Component8);
+	var SearchResultListItem = function (_React$Component9) {
+		(0, _inherits3.default)(SearchResultListItem, _React$Component9);
 
 		function SearchResultListItem() {
 			(0, _classCallCheck3.default)(this, SearchResultListItem);
@@ -524,15 +603,15 @@
 					_react2.default.createElement(
 						'div',
 						{ className: 'col1' },
+						document.distance && _react2.default.createElement(
+							'p',
+							{ className: 'distance' },
+							_react2.default.createElement(Distance, { distance: document.distance })
+						),
 						_react2.default.createElement(
 							'h4',
 							{ className: 'name' },
 							document.name
-						),
-						_react2.default.createElement(
-							'p',
-							{ className: 'distance' },
-							_react2.default.createElement(Distance, { distance: document.distance })
 						),
 						_react2.default.createElement(
 							'p',
@@ -579,8 +658,8 @@
 		return SearchResultListItem;
 	}(_react2.default.Component);
 
-	var Report = function (_React$Component9) {
-		(0, _inherits3.default)(Report, _React$Component9);
+	var Report = function (_React$Component10) {
+		(0, _inherits3.default)(Report, _React$Component10);
 
 		function Report() {
 			(0, _classCallCheck3.default)(this, Report);
@@ -611,8 +690,8 @@
 		return Report;
 	}(_react2.default.Component);
 
-	var Distance = function (_React$Component10) {
-		(0, _inherits3.default)(Distance, _React$Component10);
+	var Distance = function (_React$Component11) {
+		(0, _inherits3.default)(Distance, _React$Component11);
 
 		function Distance() {
 			(0, _classCallCheck3.default)(this, Distance);
@@ -641,8 +720,8 @@
 		return Distance;
 	}(_react2.default.Component);
 
-	var Date = function (_React$Component11) {
-		(0, _inherits3.default)(Date, _React$Component11);
+	var Date = function (_React$Component12) {
+		(0, _inherits3.default)(Date, _React$Component12);
 
 		function Date() {
 			(0, _classCallCheck3.default)(this, Date);
@@ -33219,7 +33298,7 @@
 
 
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\nhtml {\n  font-family: 'Roboto', sans-serif;\n  font-size: 20px; }\n\nbody {\n  margin: 0;\n  padding: 0; }\n\nhtml,\nbody,\nmain {\n  width: 100%;\n  height: 100%;\n  overflow: hidden; }\n\ntextarea, input {\n  border: none;\n  outline: none;\n  -webkit-appearance: none;\n  border-radius: 0; }\n\n.header {\n  background-color: #007953;\n  color: #fff; }\n\n.footer {\n  border-top: 1px solid #eee;\n  color: #666; }\n  .footer dl {\n    display: inline;\n    margin: 0;\n    padding: 0; }\n    .footer dl dt,\n    .footer dl dd {\n      display: inline;\n      margin: 0;\n      padding: 0; }\n    .footer dl dd {\n      margin-left: 0.5rem; }\n      .footer dl dd:after {\n        color: #ccc;\n        font-weight: bold;\n        margin: 0 0.5rem;\n        content: '\\2022'; }\n      .footer dl dd:last-child:after {\n        margin: 0;\n        content: ''; }\n\n.header,\n.footer {\n  text-align: center;\n  line-height: 2rem;\n  flex: 0 0 2rem;\n  font-size: 0.75rem; }\n\n.index {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  flex-direction: column; }\n\n.search-query {\n  display: flex;\n  flex-direction: row;\n  background: #eee;\n  flex: 0 0 3rem;\n  border-bottom: 1px solid #eee; }\n  .search-query input {\n    flex: 1;\n    padding: 0.5rem 1rem;\n    height: 3rem;\n    font-size: 1rem; }\n  .search-query button {\n    flex: 0 0 2rem;\n    padding: 0.5rem;\n    height: 2rem; }\n\n.search-result {\n  flex: 1;\n  overflow-y: scroll;\n  -webkit-overflow-scrolling: touch; }\n\n.sm {\n  width: 2rem;\n  height: 2rem;\n  background-size: contain;\n  background-repeat: no-repeat;\n  display: inline-block; }\n  .sm.sm1 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m465.03 494.41c17.442 0 30.176-7.211 38.395-21.965 3.851-6.878 5.871-14.425 5.871-22.632 0-7.543-1.852-14.586-5.371-21.121-8.551-15.422-21.453-23.133-38.895-23.133-16.929 0-29.84 7.035-38.215 21.125-4.359 7.199-6.367 14.918-6.367 23.129 0 8.207 1.84 15.754 5.856 22.632 8.386 14.754 21.465 21.965 38.726 21.965zm-195.46 0c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 8.554 2.019 16.265 6.035 23.129 8.722 14.425 21.453 21.468 38.23 21.468zm97.723 182.22c-86.66 0-160.93-30.844-222.45-92.535-61.52-61.7-92.356-135.8-92.356-222.3 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm0 45.258c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.41-70.428-155.23-105.63-254.47-105.63-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm203.35-331.09h50.121c0-70.742-24.973-130.93-74.926-180.88-49.957-49.957-110.14-74.942-180.55-74.942s-130.42 24.985-180.38 74.942c-49.953 49.953-74.926 110.14-74.926 180.88h50.122c0-56.996 19.945-105.28 60.183-145 40.055-39.902 88.336-59.684 145-59.684 56.668 0 105.11 19.782 145.17 59.684 40.07 39.726 60.184 88.008 60.184 145\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm2 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m173.35 248.48c-0.332 0-0.512 0.164-0.512 0.496zm386.07 0c-20.3-24.98-46.44-45.77-78.12-62.37-31.852-16.761-70.082-25.148-115-25.148-45.094 0-83.656 8.387-115.34 25.148-31.852 16.598-57.668 37.387-77.613 62.371l38.218 31.848c38.727-44.434 90.192-66.73 154.73-66.73 35.367 0 65.707 6.214 90.859 18.785 25.317 12.73 46.27 28.496 62.867 47.433zm-94.387 245.92c17.442 0.332 30.344-7.211 38.895-22.976 3.519-6.2 5.371-13.414 5.371-21.621 0-7.875-1.852-15.086-5.371-21.621-8.883-15.086-21.797-22.633-38.895-22.633-16.929 0-29.84 7.035-38.215 21.125-4.359 7.199-6.367 14.918-6.367 23.129 0 8.207 2.008 15.929 6.367 23.129 8.375 14.425 21.286 21.468 38.215 21.468zm-195.46 0c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm97.723 182.22c-86.66 0-160.93-30.844-222.45-92.535-61.52-61.68-92.356-135.78-92.356-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm0 45.258c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.41-70.418-155.23-105.62-254.47-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm3 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m367.3 721.88c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.42-70.418-155.24-105.62-254.48-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm0-45.258c-86.66 0-160.93-30.844-222.45-92.535-61.53-61.68-92.366-135.78-92.366-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm-97.73-182.21c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-16.777 0-29.344 7.035-37.719 21.125-4.359 6.535-6.546 14.242-6.546 23.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm195.46 0c17.442 0 30.344-7.543 38.895-22.976 3.519-6.867 5.371-14.075 5.371-21.621 0-7.875-2.02-15.254-5.871-22.129-8.219-14.746-20.953-22.125-38.395-22.125-17.261 0-30.34 7.379-38.726 22.125-4.016 6.875-5.856 14.254-5.856 22.129 0 8.207 1.84 15.754 5.856 22.632 8.386 14.754 21.465 21.965 38.726 21.965zm-291.68-245.92-0.512 0.496c0-0.332 0.18-0.496 0.512-0.496zm-7.875 0.496h393.94v-45.27h-393.95v45.261\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm4 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m367.3 721.88c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.42-70.418-155.24-105.62-254.48-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm0-45.258c-86.66 0-160.93-30.844-222.45-92.535-61.53-61.68-92.366-135.78-92.366-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm97.734-182.22c17.442 0 30.176-7.211 38.395-21.965 3.851-6.878 5.871-14.425 5.871-22.632 0-8.887-2.184-16.594-6.379-23.129-8.887-14.09-21.457-21.125-37.887-21.125-17.261 0-30.34 7.379-38.726 22.125-4.016 6.875-5.856 14.254-5.856 22.129 0 8.207 2.008 15.929 6.367 23.129 8.375 14.425 21.286 21.468 38.215 21.468zm-195.46 0c17.758 0 31.004-7.543 39.727-22.976 3.347-7.2 5.023-14.41 5.023-21.621 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm328.57-293.53-45.09-16.27c-15.766 35.375-40.571 63.879-74.438 85.665-33.859 21.789-71.41 32.691-112.32 32.691-41.242 0-78.797-10.902-112.99-32.691-34.036-21.786-58.676-50.29-74.09-85.665l-45.266 16.262c19.102 46.106 49.789 83.313 92.199 111.65 42.414 28.332 89.18 42.41 140.14 42.41 50.789 0 97.394-14.078 139.8-42.41 42.421-28.336 73.093-65.543 92.035-111.65\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sme {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"145.33\" width=\"188\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 188 145.33333\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 145.33)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m266.52 239.48h873.48v-236.65h-873.48zm571.01 537.61c23.539 0 41.258-9.871 52.649-29.867 5.316-10.379 8.097-20.754 8.097-31.129 0-9.367-2.531-19.242-7.336-29.617-11.898-20.754-29.871-31.129-53.41-31.129-24.297 0-41.761 9.617-52.644 28.851-6.074 9.368-8.86 19.996-8.86 31.895 0 11.894 2.532 22.269 8.102 31.129 10.883 19.996 28.601 29.867 53.402 29.867zm-269.31 0c24.3 0 42.273-9.871 54.168-29.867 5.058-9.364 7.339-19.742 7.339-31.129 0-11.899-2.281-22.024-7.339-30.375-11.895-20.25-29.868-30.371-54.168-30.371-24.551 0-42.266 10.121-52.645 30.371-5.312 8.859-8.101 18.98-8.101 30.375 0 10.879 2.789 21.512 8.101 31.887 12.402 19.492 29.867 29.109 52.645 29.109zm414.59-142.5h68.844c0-96.941-34.17-179.71-103.01-248.3-68.593-68.844-151.36-103.27-248.3-103.27-96.942 0-179.71 34.425-248.56 103.27-68.594 68.594-103.01 151.36-103.01 248.3h69.098c0-78.465 27.59-145.03 83.019-199.45 54.672-54.926 121.24-82.262 199.45-82.262 77.957 0 144.53 27.336 199.45 82.262 55.433 55.429 83.019 121.74 83.019 199.45zm-279.68 455.31c136.68 0 252.86-48.34 349.29-145.28 96.94-96.438 145.54-213.12 145.54-350.05 0-86.055-19.49-164.02-57.96-233.62h260.19l-171.9-126.78 171.9-127.57h-245.26v149.08l-37.97 67.578c-1.51-2.532-2.78-4.809-4.3-7.09-1.52-2.274-3.03-4.297-4.55-6.324l29.61-54.164h-57.71v19.234c-0.51-0.508-6.33-6.836-17.21-19.234h-91.878c12.402 10.375 25.055 21.515 37.968 33.406 84.28 84.543 126.55 186.29 126.55 305.5 0 119.22-42.27 220.96-126.55 305.5-85.05 85.043-187.05 127.56-305.76 127.56-119.98 0-221.98-42.519-306.01-127.56-84.535-84.539-126.8-186.29-126.8-305.5s42.27-220.96 126.8-305.5c11.645-11.891 24.301-23.031 37.715-33.406h-91.879c-11.391 12.398-17.211 18.726-17.211 19.234v-19.234h-56.187l28.851 53.402c-3.543 4.051-6.832 8.605-9.617 14.176l-37.87-67.59v-149.08h-245.26l171.87 127.57-171.87 126.81h260.2c-38.473 69.601-57.957 147.56-57.957 233.62 0 136.93 48.594 253.61 145.54 350.05 95.926 96.945 212.61 145.28 349.8 145.28zm-283.99-911.42v-114.91h97.195v26.07h-61.508v23.032h55.684v23.539h-55.684v17.969h59.988v24.3zm136.42 0v-114.91h91.371v28.348h-55.683v86.566zm128.32 0v-114.91h36.449v114.91zm73.402 0v-28.093h36.449v-86.816h35.688v86.817h36.191v28.093zm144.02 0v-114.91h96.942v26.074h-61.49v23.032h55.684v23.539h-55.68v17.969h60.242v24.3h-95.676\" fill=\"#007b5e\"/></g></g></svg>');\n    width: 4rem;\n    height: 4rem; }\n\n.search-result-list__item {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  border-bottom: 1px solid #eee;\n  flex-wrap: wrap; }\n  .search-result-list__item:last-child {\n    border-bottom: none; }\n  .search-result-list__item .col1 {\n    padding: 1rem;\n    flex-basis: 4rem;\n    flex-grow: 1; }\n  .search-result-list__item .col2 {\n    padding: 1rem;\n    flex-basis: 4rem;\n    flex-grow: 0;\n    flex-shrink: 0; }\n  .search-result-list__item .col3 {\n    background-color: #fef4e0;\n    margin: 1rem;\n    padding: 1rem;\n    flex-basis: 12rem;\n    flex-grow: 1;\n    flex-shrink: 0;\n    display: flex;\n    flex-direction: row; }\n    .search-result-list__item .col3 > * {\n      flex-basis: 3rem;\n      flex-grow: 1;\n      flex-shrink: 0;\n      text-align: center; }\n  .search-result-list__item .name {\n    margin: 0 0 0.5rem 0; }\n  .search-result-list__item .distance {\n    color: 444;\n    font-size: 0.75rem;\n    margin: 0 0 0.5rem 0; }\n  .search-result-list__item .address {\n    margin: 0; }\n\n.date {\n  display: inline-block;\n  margin-top: 0.5rem;\n  font-size: 0.50rem; }\n\na {\n  color: #007953;\n  text-decoration: none; }\n\na:hover {\n  text-decoration: underline; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\nhtml {\n  font-family: sans-serif;\n  font-size: 20px; }\n\nbody {\n  margin: 0;\n  padding: 0; }\n\nhtml,\nbody,\nmain {\n  width: 100%;\n  height: 100%;\n  overflow: hidden; }\n\ntextarea, input {\n  border: none;\n  outline: none;\n  -webkit-appearance: none;\n  border-radius: 0; }\n\n.header {\n  background-color: #007953;\n  color: #fff; }\n\n.footer {\n  border-top: 1px solid #eee;\n  color: #666; }\n  .footer dl {\n    display: inline;\n    margin: 0;\n    padding: 0; }\n    .footer dl dt,\n    .footer dl dd {\n      display: inline;\n      margin: 0;\n      padding: 0; }\n    .footer dl dd {\n      margin-left: 0.5rem; }\n      .footer dl dd:after {\n        color: #ccc;\n        font-weight: bold;\n        margin: 0 0.5rem;\n        content: '\\2022'; }\n      .footer dl dd:last-child:after {\n        margin: 0;\n        content: ''; }\n\n.header,\n.footer {\n  text-align: center;\n  line-height: 2rem;\n  flex: 0 0 2rem;\n  font-size: 0.75rem; }\n\n.index {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  flex-direction: column; }\n\n.search-query {\n  display: flex;\n  flex-direction: row;\n  background: #eee;\n  flex: 0 0 3rem;\n  border-bottom: 1px solid #eee; }\n  .search-query input {\n    flex: 1;\n    padding: 0.5rem 1rem;\n    height: 3rem;\n    font-size: 1rem; }\n  .search-query button {\n    flex: 0 0 2rem;\n    padding: 0.5rem;\n    height: 2rem; }\n\n.search-result {\n  flex: 1;\n  overflow-y: scroll;\n  -webkit-overflow-scrolling: touch; }\n\n.sm {\n  width: 2rem;\n  height: 2rem;\n  background-size: contain;\n  background-repeat: no-repeat;\n  display: inline-block; }\n  .sm.sm1 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m465.03 494.41c17.442 0 30.176-7.211 38.395-21.965 3.851-6.878 5.871-14.425 5.871-22.632 0-7.543-1.852-14.586-5.371-21.121-8.551-15.422-21.453-23.133-38.895-23.133-16.929 0-29.84 7.035-38.215 21.125-4.359 7.199-6.367 14.918-6.367 23.129 0 8.207 1.84 15.754 5.856 22.632 8.386 14.754 21.465 21.965 38.726 21.965zm-195.46 0c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 8.554 2.019 16.265 6.035 23.129 8.722 14.425 21.453 21.468 38.23 21.468zm97.723 182.22c-86.66 0-160.93-30.844-222.45-92.535-61.52-61.7-92.356-135.8-92.356-222.3 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm0 45.258c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.41-70.428-155.23-105.63-254.47-105.63-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm203.35-331.09h50.121c0-70.742-24.973-130.93-74.926-180.88-49.957-49.957-110.14-74.942-180.55-74.942s-130.42 24.985-180.38 74.942c-49.953 49.953-74.926 110.14-74.926 180.88h50.122c0-56.996 19.945-105.28 60.183-145 40.055-39.902 88.336-59.684 145-59.684 56.668 0 105.11 19.782 145.17 59.684 40.07 39.726 60.184 88.008 60.184 145\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm2 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m173.35 248.48c-0.332 0-0.512 0.164-0.512 0.496zm386.07 0c-20.3-24.98-46.44-45.77-78.12-62.37-31.852-16.761-70.082-25.148-115-25.148-45.094 0-83.656 8.387-115.34 25.148-31.852 16.598-57.668 37.387-77.613 62.371l38.218 31.848c38.727-44.434 90.192-66.73 154.73-66.73 35.367 0 65.707 6.214 90.859 18.785 25.317 12.73 46.27 28.496 62.867 47.433zm-94.387 245.92c17.442 0.332 30.344-7.211 38.895-22.976 3.519-6.2 5.371-13.414 5.371-21.621 0-7.875-1.852-15.086-5.371-21.621-8.883-15.086-21.797-22.633-38.895-22.633-16.929 0-29.84 7.035-38.215 21.125-4.359 7.199-6.367 14.918-6.367 23.129 0 8.207 2.008 15.929 6.367 23.129 8.375 14.425 21.286 21.468 38.215 21.468zm-195.46 0c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm97.723 182.22c-86.66 0-160.93-30.844-222.45-92.535-61.52-61.68-92.356-135.78-92.356-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm0 45.258c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.41-70.418-155.23-105.62-254.47-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm3 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m367.3 721.88c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.42-70.418-155.24-105.62-254.48-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm0-45.258c-86.66 0-160.93-30.844-222.45-92.535-61.53-61.68-92.366-135.78-92.366-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm-97.73-182.21c17.758 0 30.672-7.211 38.883-21.965 3.859-6.878 5.867-14.425 5.867-22.632 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-16.777 0-29.344 7.035-37.719 21.125-4.359 6.535-6.546 14.242-6.546 23.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm195.46 0c17.442 0 30.344-7.543 38.895-22.976 3.519-6.867 5.371-14.075 5.371-21.621 0-7.875-2.02-15.254-5.871-22.129-8.219-14.746-20.953-22.125-38.395-22.125-17.261 0-30.34 7.379-38.726 22.125-4.016 6.875-5.856 14.254-5.856 22.129 0 8.207 1.84 15.754 5.856 22.632 8.386 14.754 21.465 21.965 38.726 21.965zm-291.68-245.92-0.512 0.496c0-0.332 0.18-0.496 0.512-0.496zm-7.875 0.496h393.94v-45.27h-393.95v45.261\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sm4 {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"97.333\" width=\"97.333\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 97.333336 97.333336\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 97.333)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m367.3 721.88c99.246 0 184.07-35.199 254.48-105.61 70.415-70.403 105.61-155.24 105.61-254.46 0-99.082-35.199-183.9-105.61-254.31-70.42-70.418-155.24-105.62-254.48-105.62-99.23-0.0011-184.07 35.202-254.3 105.61-70.414 70.41-105.61 155.23-105.61 254.31 0 99.23 35.199 184.06 105.61 254.46 70.234 70.41 155.07 105.61 254.3 105.61zm0-45.258c-86.66 0-160.93-30.844-222.45-92.535-61.53-61.68-92.366-135.78-92.366-222.28 0-86.676 30.836-160.77 92.364-222.13 61.523-61.348 135.79-92.199 222.45-92.199 86.508 0 160.6 30.852 222.29 92.199 61.695 61.359 92.531 135.45 92.531 222.13 0 86.496-30.836 160.59-92.531 222.28-61.688 61.691-135.78 92.535-222.29 92.535zm97.734-182.22c17.442 0 30.176-7.211 38.395-21.965 3.851-6.878 5.871-14.425 5.871-22.632 0-8.887-2.184-16.594-6.379-23.129-8.887-14.09-21.457-21.125-37.887-21.125-17.261 0-30.34 7.379-38.726 22.125-4.016 6.875-5.856 14.254-5.856 22.129 0 8.207 2.008 15.929 6.367 23.129 8.375 14.425 21.286 21.468 38.215 21.468zm-195.46 0c17.758 0 31.004-7.543 39.727-22.976 3.347-7.2 5.023-14.41 5.023-21.621 0-7.875-2.008-15.254-5.867-22.129-8.211-14.746-21.125-22.125-38.883-22.125-17.273 0-30.176 7.379-38.23 22.125-4.016 6.875-6.035 14.254-6.035 22.129 0 9.218 2.187 16.765 6.546 23.129 8.375 14.425 20.942 21.468 37.719 21.468zm328.57-293.53-45.09-16.27c-15.766 35.375-40.571 63.879-74.438 85.665-33.859 21.789-71.41 32.691-112.32 32.691-41.242 0-78.797-10.902-112.99-32.691-34.036-21.786-58.676-50.29-74.09-85.665l-45.266 16.262c19.102 46.106 49.789 83.313 92.199 111.65 42.414 28.332 89.18 42.41 140.14 42.41 50.789 0 97.394-14.078 139.8-42.41 42.421-28.336 73.093-65.543 92.035-111.65\" fill-rule=\"evenodd\" fill=\"#007b5e\"/></g></g></svg>'); }\n  .sm.sme {\n    background-image: url('data:image/svg+xml;utf8,<svg xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" height=\"145.33\" width=\"188\" version=\"1.1\" xmlns:cc=\"http://creativecommons.org/ns#\" viewBox=\"0 0 188 145.33333\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"><metadata id=\"metadata8\"><rdf:RDF><cc:Work rdf:about=\"\"><dc:format>image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/></cc:Work></rdf:RDF></metadata><g id=\"g10\" transform=\"matrix(1.3333 0 0 -1.3333 0 145.33)\"><g id=\"g12\" transform=\"scale(.1)\"><path id=\"path14\" d=\"m266.52 239.48h873.48v-236.65h-873.48zm571.01 537.61c23.539 0 41.258-9.871 52.649-29.867 5.316-10.379 8.097-20.754 8.097-31.129 0-9.367-2.531-19.242-7.336-29.617-11.898-20.754-29.871-31.129-53.41-31.129-24.297 0-41.761 9.617-52.644 28.851-6.074 9.368-8.86 19.996-8.86 31.895 0 11.894 2.532 22.269 8.102 31.129 10.883 19.996 28.601 29.867 53.402 29.867zm-269.31 0c24.3 0 42.273-9.871 54.168-29.867 5.058-9.364 7.339-19.742 7.339-31.129 0-11.899-2.281-22.024-7.339-30.375-11.895-20.25-29.868-30.371-54.168-30.371-24.551 0-42.266 10.121-52.645 30.371-5.312 8.859-8.101 18.98-8.101 30.375 0 10.879 2.789 21.512 8.101 31.887 12.402 19.492 29.867 29.109 52.645 29.109zm414.59-142.5h68.844c0-96.941-34.17-179.71-103.01-248.3-68.593-68.844-151.36-103.27-248.3-103.27-96.942 0-179.71 34.425-248.56 103.27-68.594 68.594-103.01 151.36-103.01 248.3h69.098c0-78.465 27.59-145.03 83.019-199.45 54.672-54.926 121.24-82.262 199.45-82.262 77.957 0 144.53 27.336 199.45 82.262 55.433 55.429 83.019 121.74 83.019 199.45zm-279.68 455.31c136.68 0 252.86-48.34 349.29-145.28 96.94-96.438 145.54-213.12 145.54-350.05 0-86.055-19.49-164.02-57.96-233.62h260.19l-171.9-126.78 171.9-127.57h-245.26v149.08l-37.97 67.578c-1.51-2.532-2.78-4.809-4.3-7.09-1.52-2.274-3.03-4.297-4.55-6.324l29.61-54.164h-57.71v19.234c-0.51-0.508-6.33-6.836-17.21-19.234h-91.878c12.402 10.375 25.055 21.515 37.968 33.406 84.28 84.543 126.55 186.29 126.55 305.5 0 119.22-42.27 220.96-126.55 305.5-85.05 85.043-187.05 127.56-305.76 127.56-119.98 0-221.98-42.519-306.01-127.56-84.535-84.539-126.8-186.29-126.8-305.5s42.27-220.96 126.8-305.5c11.645-11.891 24.301-23.031 37.715-33.406h-91.879c-11.391 12.398-17.211 18.726-17.211 19.234v-19.234h-56.187l28.851 53.402c-3.543 4.051-6.832 8.605-9.617 14.176l-37.87-67.59v-149.08h-245.26l171.87 127.57-171.87 126.81h260.2c-38.473 69.601-57.957 147.56-57.957 233.62 0 136.93 48.594 253.61 145.54 350.05 95.926 96.945 212.61 145.28 349.8 145.28zm-283.99-911.42v-114.91h97.195v26.07h-61.508v23.032h55.684v23.539h-55.684v17.969h59.988v24.3zm136.42 0v-114.91h91.371v28.348h-55.683v86.566zm128.32 0v-114.91h36.449v114.91zm73.402 0v-28.093h36.449v-86.816h35.688v86.817h36.191v28.093zm144.02 0v-114.91h96.942v26.074h-61.49v23.032h55.684v23.539h-55.68v17.969h60.242v24.3h-95.676\" fill=\"#007b5e\"/></g></g></svg>');\n    width: 4rem;\n    height: 4rem; }\n\n.search-result-list__item {\n  display: flex;\n  flex-direction: row;\n  align-items: flex-start;\n  border-bottom: 1px solid #eee;\n  flex-wrap: wrap; }\n  .search-result-list__item:last-child {\n    border-bottom: none; }\n  .search-result-list__item .col1 {\n    padding: 1rem;\n    flex-basis: 4rem;\n    flex-grow: 1; }\n  .search-result-list__item .col2 {\n    padding: 1rem;\n    flex-basis: 4rem;\n    flex-grow: 0;\n    flex-shrink: 0; }\n  .search-result-list__item .col3 {\n    background-color: #fef4e0;\n    margin: 1rem;\n    padding: 1rem;\n    flex-basis: 12rem;\n    flex-grow: 1;\n    flex-shrink: 0;\n    display: flex;\n    flex-direction: row; }\n    .search-result-list__item .col3 > * {\n      flex-basis: 3rem;\n      flex-grow: 1;\n      flex-shrink: 0;\n      text-align: center; }\n  .search-result-list__item .name {\n    margin: 0 0 0.5rem 0; }\n  .search-result-list__item .distance {\n    color: #999;\n    font-size: 0.75rem;\n    margin: 0 0 0.5rem 0; }\n  .search-result-list__item .address {\n    margin: 0; }\n\n.date {\n  display: inline-block;\n  margin-top: 0.5rem;\n  font-size: 0.50rem; }\n\na {\n  color: #007953;\n  text-decoration: none; }\n\na:hover {\n  text-decoration: underline; }\n", ""]);
 
 	// exports
 

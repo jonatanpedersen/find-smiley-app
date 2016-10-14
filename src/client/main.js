@@ -8,23 +8,21 @@ import classnames from 'classnames';
 import moment from 'moment';
 import localforage from 'localforage';
 
-function createDocumentsMap (documents) {
-	return documents.reduce((documentsMap, nextDocument) => {
-		documentsMap[nextDocument._id] = nextDocument;
-		return documentsMap;
-	}, {});
-}
-
-function createDocumentsArray (documentsMap) {
-	return ;
-}
-
-export async function main () {
+async function getDocuments () {
 	try {
-		localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
-		let mainElement = document.getElementById('main');
+		return (await localforage.getItem('documents')) || [];
+	} catch (err) {
+		throw err;
+	}
+}
 
-		let documents = await localforage.getItem('documents') || [];
+async function setDocuments (documents) {
+	return localforage.setItem('documents', documents);
+}
+
+async function updateDocuments (documents) {
+	try {
+		let documents = await getDocuments();
 
 		let after = documents
 			.map(document => moment(document.date))
@@ -34,34 +32,37 @@ export async function main () {
 			.toDate()
 			.toISOString();
 
-		console.log(after);
-
-		console.log('fetching documents');
 		let newDocuments = await get(`/api/documents?after=${after}`);
 
 		documents = Object.values({...createDocumentsMap(documents),...createDocumentsMap(newDocuments)});
 
-		localforage.setItem('documents', documents);
+		await setDocuments(documents);
+	} catch (err) {
+		throw err;
+	}
+}
 
-		console.log('getting position');
-		let position = await getCurrentPosition();
+function createDocumentsMap (documents) {
+	return documents.reduce((documentsMap, nextDocument) => {
+		documentsMap[nextDocument._id] = nextDocument;
+		return documentsMap;
+	}, {});
+}
 
-		console.log('calculating distances');
-		documents.forEach(document => {
-			document.distance = getDistanceFromLatLonInKm(position.coords.latitude, position.coords.longitude, document.latitude, document.longitude);
-		});
+function createDocumentsArray (documentsMap) {
+	return;
+}
 
-		console.log('sorting documents');
-		documents.sort((a,b) => a.distance - b.distance);
+export async function main () {
+	try {
+		localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
 
-		console.log('creating search index');
-		let searchIndex = createSearchIndex(documents);
-		let search = createSearch(searchIndex, documents);
+		let mainElement = document.getElementById('main');
 
 		render((
 			<Router history={browserHistory}>
-				<Route path="/">
-					<IndexRoute component={withProps(Index, {search})}/>
+				<Route path="/" component={Main}>
+					<IndexRoute component={Home}/>
 				</Route>
 			</Router>
 		), mainElement);
@@ -70,7 +71,60 @@ export async function main () {
 	}
 }
 
-class Index extends React.Component {
+class Main extends React.Component {
+	constructor (props) {
+		super(props);
+		this.state = {documents: []};
+	}
+
+	componentDidMount () {
+		getDocuments()
+			.then(documents => {
+				this.setState({documents})
+			});
+
+		updateDocuments()
+			.then(getDocuments)
+			.then(documents => {
+				this.setState({documents})
+			});
+
+		let watchId = navigator.geolocation.watchPosition(currentPosition => {
+			this.setState({currentPosition})
+		}, err => {
+			this.setState({currentPosition: undefined});
+		});
+
+		this.setState({watchId});
+	}
+
+	componentWillUnmount () {
+		let {watchId} = this.state;
+
+		if (watchId) {
+			navigator.geolocation.clearWatch(watchId);
+		}
+	}
+
+	render () {
+		let {documents, currentPosition} = this.state;
+
+		if (currentPosition) {
+			documents.forEach(document => {
+				document.distance = getDistanceFromLatLonInKm(currentPosition.coords.latitude, currentPosition.coords.longitude, document.latitude, document.longitude);
+			});
+
+			documents.sort((a,b) => a.distance - b.distance);
+		}
+
+		let searchIndex = createSearchIndex(documents);
+		let search = createSearch(searchIndex, documents);
+
+		return React.cloneElement(this.props.children, {search});
+	}
+}
+
+class Home extends React.Component {
 	constructor (props) {
 		super(props);
 		this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
@@ -88,7 +142,6 @@ class Index extends React.Component {
 			<Header />
 			<SearchQuery onChange={this.handleSearchQueryChange} />
 			<SearchResult searchResult={searchResult} />
-			<Footer />
 		</div>);
 	}
 }
@@ -171,8 +224,8 @@ class SearchResultListItem extends React.Component {
 		return (
 			<div className="search-result-list__item">
 				<div className="col1">
+					{document.distance && <p className="distance"><Distance distance={document.distance} /></p>}
 					<h4 className="name">{document.name}</h4>
-					<p className="distance"><Distance distance={document.distance} /></p>
 					<p className="address">{document.streetAddress}, {document.postalCode}, {document.city}</p>
 				</div>
 				<div className="col2">
@@ -243,12 +296,6 @@ function withProps(Component, props) {
     }
   });
 };
-
-async function getCurrentPosition () {
-	return new Promise ((resolve, reject) => {
-		navigator.geolocation.getCurrentPosition(resolve, reject);
-	});
-}
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
   var R = 6371; // Radius of the earth in km
