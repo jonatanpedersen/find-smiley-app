@@ -24,12 +24,56 @@ function createDocumentsArray (documentsMap) {
 
 export async function main () {
 	try {
+
+		let topics = {};
+		let publish = (topic, data) => {
+			let callbacks = topics[topic] && [...topics[topic]];
+
+			if (callbacks) {
+				return Promise.all(callbacks.map(callback => callback(data)));
+			}
+		};
+
+		let subscribe = (topic, callback) => {
+			topics[topic] = topics[topic] || new Set();
+			topics[topic].add(callback);
+		};
+
+		let unsubscribe = (topic, callback) => {
+			topics[topic] && topics[topic].delete(callback);
+		};
+
+		// Worker Setup
+		var worker = new Worker("worker.js");
+
+		subscribe('position', position => {
+			worker.postMessage({topic: 'position', data: position});
+		});
+
+		subscribe('search', searchQuery => {
+			worker.postMessage({topic: 'search', data: searchQuery});
+		});
+
+		worker.onmessage = (event) => {
+			let message = event.data;
+			publish(message.topic, message.data);
+		}
+
+		// Position Setup
+		let watchId = navigator.geolocation.watchPosition(currentPosition => {
+			let {latitude, longitude} = currentPosition.coords;
+
+			publish('position', {latitude, longitude});
+		}, err => {
+			publish('position', undefined);
+		});
+
 		let mainElement = document.getElementById('main');
 
 		render((
 			<Router history={browserHistory}>
-				<Route path="/" component={Main}>
-					<IndexRoute component={Home}/>
+				<Route path="/" component={withProps(Main, {publish, subscribe, unsubscribe})}>
+					<IndexRoute component={withProps(Home, {publish, subscribe, unsubscribe})}/>
 				</Route>
 			</Router>
 		), mainElement);
@@ -41,51 +85,30 @@ export async function main () {
 class Main extends React.Component {
 	constructor (props) {
 		super(props);
-		this.state = {documents: [], ready: false};
+		this.state = {searchReady: false};
+		this.handleSearchReady = this.handleSearchReady.bind(this);
 	}
 
 	componentDidMount () {
-		getDocuments()
-			.then(documents => {
-				this.setState({documents, ready: true})
-			});
-
-		let watchId = navigator.geolocation.watchPosition(currentPosition => {
-			this.setState({currentPosition})
-		}, err => {
-			this.setState({currentPosition: undefined});
-		});
-
-		this.setState({watchId});
+		this.props.subscribe('searchReady', this.handleSearchReady)
 	}
 
 	componentWillUnmount () {
-		let {watchId} = this.state;
+		this.props.unsubscribe('searchReady', this.handleSearchReady);
+	}
 
-		if (watchId) {
-			navigator.geolocation.clearWatch(watchId);
-		}
+	handleSearchReady () {
+		this.setState({searchReady: true})
 	}
 
 	render () {
-		let {documents, currentPosition, ready} = this.state;
+		let {searchReady} = this.state;
 
-		if (!ready) {
+		if (!searchReady) {
 			return <Loading />;
 		}
 
-		if (currentPosition) {
-			documents.forEach(document => {
-				document.distance = getDistanceFromLatLonInKm(currentPosition.coords.latitude, currentPosition.coords.longitude, document.latitude, document.longitude);
-			});
-
-			documents.sort((a,b) => a.distance - b.distance);
-		}
-
-		let searchIndex = createSearchIndex(documents);
-		let search = createSearch(searchIndex, documents);
-
-		return React.cloneElement(this.props.children, {search});
+		return React.cloneElement(this.props.children);
 	}
 }
 
@@ -93,15 +116,31 @@ class Home extends React.Component {
 	constructor (props) {
 		super(props);
 		this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
+		this.handleSearchResult = this.handleSearchResult.bind(this);
 		this.state = {};
 	}
 
-	handleSearchQueryChange (newSearchQuery) {
-		this.setState({searchQuery: newSearchQuery});
+	componentDidMount () {
+		this.props.subscribe('searchResult', this.handleSearchResult);
+		this.props.publish('search', this.state.searchQuery);
+	}
+
+	componentWillUnmount () {
+		this.props.unsubscribe('searchResult', this.handleSearchResult);
+	}
+
+	handleSearchResult (searchResult) {
+		this.setState({searchResult});
+	}
+
+	handleSearchQueryChange (searchQuery) {
+		this.setState({searchQuery});
+
+		this.props.publish('search', searchQuery);
 	}
 
 	render () {
-		let searchResult = this.props.search(this.state.searchQuery, null, 0, 40);
+		let {searchResult} = this.state;
 
 		return (
 			<Page>
@@ -192,13 +231,18 @@ class SearchQuery extends React.Component {
 }
 
 class SearchResult extends React.Component {
+	componentDidUpdate () {
+    var node = this.refs.searchResult;
+    node.scrollTop = 0;
+  }
+
 	render () {
 		if (!this.props.searchResult) {
 			return null;
 		}
 
 		return (
-			<div className="search-result">
+			<div className="search-result" ref="searchResult">
 				<SearchResultList documents={this.props.searchResult} />
 			</div>
 		);
@@ -302,20 +346,3 @@ function withProps(Component, props) {
     }
   });
 };
-
-function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1);
-  var a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  var d = R * c; // Distance in km
-  return d;
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI/180)
-}

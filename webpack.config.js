@@ -1,11 +1,15 @@
 var webpack = require('webpack');
 
 module.exports = {
-    entry: "./src/client/index.js",
+    entry: {
+      bundle: './src/client/index.js',
+      worker: './src/worker/index.js'
+    },
     output: {
         path: __dirname + '/public',
-        filename: "./bundle.js"
+        filename: '[name].js'
     },
+    devtool: 'source-map',
     module: {
         loaders: [
             {
@@ -17,9 +21,9 @@ module.exports = {
                     plugins: ['transform-runtime']
                 }
             },
-            { test: /\.json$/, loaders: ["json"] },
-            { test: /\.scss$/, loaders: ["style", "css", "sass"] },
-            { test: /\.css$/, loaders: ["style", "css"] },
+            { test: /\.json$/, loaders: ['json'] },
+            { test: /\.scss$/, loaders: ['style', 'css', 'sass'] },
+            { test: /\.css$/, loaders: ['style', 'css'] },
             { test: /\.(otf|eot|svg|ttf|woff|woff2).*$/, loader: 'url?limit=1048576' }
         ]
     },
