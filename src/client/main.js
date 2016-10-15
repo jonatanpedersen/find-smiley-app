@@ -24,8 +24,6 @@ function createDocumentsArray (documentsMap) {
 
 export async function main () {
 	try {
-		localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
-
 		let mainElement = document.getElementById('main');
 
 		render((

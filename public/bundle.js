@@ -126,8 +126,6 @@
 					switch (_context2.prev = _context2.next) {
 						case 0:
 							try {
-								localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
-
 								mainElement = document.getElementById('main');
 
 
