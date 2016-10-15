@@ -240,7 +240,9 @@
 				var ready = _state.ready;
 
 
-				return _react2.default.createElement(Loading, null);
+				if (!ready) {
+					return _react2.default.createElement(Loading, null);
+				}
 
 				if (currentPosition) {
 					documents.forEach(function (document) {

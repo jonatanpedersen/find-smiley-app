@@ -70,7 +70,9 @@ class Main extends React.Component {
 	render () {
 		let {documents, currentPosition, ready} = this.state;
 
-		return <Loading />;
+		if (!ready) {
+			return <Loading />;
+		}
 
 		if (currentPosition) {
 			documents.forEach(document => {
