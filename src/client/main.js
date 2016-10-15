@@ -6,40 +6,9 @@ import {createSearchIndex, createSearch} from './search';
 import mainStyles from './main.scss';
 import classnames from 'classnames';
 import moment from 'moment';
-import localforage from 'localforage';
 
 async function getDocuments () {
-	try {
-		return (await localforage.getItem('documents')) || [];
-	} catch (err) {
-		throw err;
-	}
-}
-
-async function setDocuments (documents) {
-	return localforage.setItem('documents', documents);
-}
-
-async function updateDocuments (documents) {
-	try {
-		let documents = await getDocuments();
-
-		let after = documents
-			.map(document => moment(document.date))
-			.reduce((after, date) => {
-				return date.isAfter(after) ? date : after;
-			}, moment('1970-01-01'))
-			.toDate()
-			.toISOString();
-
-		let newDocuments = await get(`/api/documents?after=${after}`);
-
-		documents = Object.values({...createDocumentsMap(documents),...createDocumentsMap(newDocuments)});
-
-		await setDocuments(documents);
-	} catch (err) {
-		throw err;
-	}
+	return get('/api/documents');
 }
 
 function createDocumentsMap (documents) {
@@ -74,19 +43,13 @@ export async function main () {
 class Main extends React.Component {
 	constructor (props) {
 		super(props);
-		this.state = {documents: []};
+		this.state = {documents: [], ready: false};
 	}
 
 	componentDidMount () {
 		getDocuments()
 			.then(documents => {
-				this.setState({documents})
-			});
-
-		updateDocuments()
-			.then(getDocuments)
-			.then(documents => {
-				this.setState({documents})
+				this.setState({documents, ready: true})
 			});
 
 		let watchId = navigator.geolocation.watchPosition(currentPosition => {
@@ -107,7 +70,9 @@ class Main extends React.Component {
 	}
 
 	render () {
-		let {documents, currentPosition} = this.state;
+		let {documents, currentPosition, ready} = this.state;
+
+		return <Loading />;
 
 		if (currentPosition) {
 			documents.forEach(document => {
@@ -138,10 +103,37 @@ class Home extends React.Component {
 	render () {
 		let searchResult = this.props.search(this.state.searchQuery, null, 0, 40);
 
-		return (<div className="index">
-			<Header />
-			<SearchQuery onChange={this.handleSearchQueryChange} />
-			<SearchResult searchResult={searchResult} />
+		return (
+			<Page>
+				<Header />
+				<SearchQuery onChange={this.handleSearchQueryChange} />
+				<SearchResult searchResult={searchResult} />
+			</Page>
+		);
+	}
+}
+
+class Loading extends React.Component {
+	render () {
+		return (
+			<Page>
+				<Header />
+				<Body>
+					<Centered>
+						<Smiley type="e" />
+						<div className="loading"/>
+					</Centered>
+				</Body>
+				<Footer />
+			</Page>
+		);
+	}
+}
+
+class Centered extends React.Component {
+	render () {
+		return (<div className="centered">
+		{this.props.children}
 		</div>);
 	}
 }
@@ -154,6 +146,22 @@ class Header extends React.Component {
 	}
 }
 
+class Page extends React.Component {
+	render () {
+		return (<div className="page">
+		{this.props.children}
+		</div>);
+	}
+}
+
+class Body extends React.Component {
+	render () {
+		return (<div className="body">
+		{this.props.children}
+		</div>);
+	}
+}
+
 class Footer extends React.Component {
 	render () {
 		return (<footer className="footer">
@@ -162,8 +170,6 @@ class Footer extends React.Component {
 				<dd><a href="https://www.jonatanpedersen.com/">Jonatan Pedersen</a></dd>
 				<dt>Datakilde:</dt>
 				<dd><a href="https://www.foedevarestyrelsen.dk/">Fødevarestyrelsen</a></dd>
-				<dt>Sidst opdateret:</dt>
-				<dd>I dag</dd>
 			</dl>
 		</footer>);
 	}

@@ -232,7 +232,7 @@ export async function main () {
 			let job = createJob(db);
 
 			scheduledJobs.push(nodeSchedule.scheduleJob(getScedulingRule(), job));
-			scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
+			//scheduledJobs.push(nodeSchedule.scheduleJob(new Date(), job));
 		});
 	} catch (err) {
 		console.error(err, err.stack);
